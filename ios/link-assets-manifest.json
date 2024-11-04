@@ -1,0 +1,41 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/FontAwesome.ttf",
+      "sha1": "6f4a04bfc42e3bb9c5007e187532b2a00d22d8a7"
+    },
+    {
+      "path": "assets/fonts/Gotham-Bold.otf",
+      "sha1": "57cf282075f04b702db79e68166c4d5da0242dce"
+    },
+    {
+      "path": "assets/fonts/Gotham-Book.ttf",
+      "sha1": "104f555e14efc1ce78926100209671d52dc31ba1"
+    },
+    {
+      "path": "assets/fonts/Gotham-BookItalic.otf",
+      "sha1": "cf704217978a3a4030943389b8221c4dc43c9bf4"
+    },
+    {
+      "path": "assets/fonts/Gotham-Light.ttf",
+      "sha1": "c44d6c4bde608e1d76b27a1587da83225af4ca4f"
+    },
+    {
+      "path": "assets/fonts/Gotham-LightItalic.otf",
+      "sha1": "6477f07064cf8ca6cbb9093929a1d5143b1d5a8a"
+    },
+    {
+      "path": "assets/fonts/Gotham-Medium.otf",
+      "sha1": "b2d9f5b700bee9e89776cb0474d3382e0d7e0f6a"
+    },
+    {
+      "path": "assets/fonts/MaterialCommunityIcons.ttf",
+      "sha1": "4c2a838b00dbb5e8bb1b368fce0de534e8eb241c"
+    },
+    {
+      "path": "assets/fonts/MaterialIcons.ttf",
+      "sha1": "7e02c3f005532ff4d24148567c84089756a7848a"
+    }
+  ]
+}

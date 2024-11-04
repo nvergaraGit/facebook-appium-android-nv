@@ -1,0 +1,38 @@
+name: 'Semantic Version'
+
+on:
+  pull_request:
+    branches:
+      - dev
+    types:
+      - closed
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  semantic-version:
+    runs-on: ubuntu-22.04
+    if: "!startsWith(github.event.head_commit.message, '[RELEASE]')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.CI_GITHUB_PAT }}
+          fetch-depth: 0
+      - name: Bump version
+        env:
+          IS_FEATURE: ${{ contains(github.head_ref, 'feature/') }}
+        run: |
+          COMMIT_MSG=$(git log -1 --no-merges --pretty=%B)
+          VERSION_TYPE=patch
+          if [[ "$COMMIT_MSG" == *"#MAJOR#"* ]]; then
+            VERSION_TYPE=major
+          elif ${IS_FEATURE} == true; then
+            VERSION_TYPE=minor
+          fi
+          git config --global user.name 'Embonor'
+          git config --global user.email 'cicd@embonor.cl'
+          npm version $VERSION_TYPE -m "[RELEASE] %s"
+          git push --follow-tags

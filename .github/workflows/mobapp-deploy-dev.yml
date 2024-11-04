@@ -1,0 +1,85 @@
+#version:0.1.0
+name: 'Deploy pipeline'
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  ENVIRONMENT: develop
+jobs:
+  android-build:
+    name: Android Build
+    runs-on: ubuntu-22.04
+    environment: develop
+    steps:
+      - name: Checkout
+        with:
+          fetch-depth: 0
+        uses: actions/checkout@v3
+      - name: Set App variables
+        run: |
+          echo "PROJECT=$(jq -r .project package.json)" >> $GITHUB_ENV
+          echo "APP_NAME=$(jq -r .name package.json)" >> $GITHUB_ENV
+          echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.OIDC_EKS_ROLE }}
+          role-session-name: OIDCSession
+      - name: Replace vars k8s
+        run: |
+          export NEW_IMAGE_TAG=${{env.VERSION}}
+
+          echo "SSM path=/${{ env.PROJECT }}/${{ env.APP_NAME }}/$ENVIRONMENT"   
+          SSM_PARAMETERS=$(aws ssm get-parameters-by-path --path "/${{env.PROJECT}}/${{env.APP_NAME}}/$ENVIRONMENT" --with-decrypt \
+          | jq -r '.Parameters[] | (.Name | split("/")[-1] | ascii_upcase | gsub("-"; "_")) + "=" + .Value ')
+          for i in $SSM_PARAMETERS; do export $i \
+          && echo $i; done
+
+          ###### create .env file
+          cat <<EOF > .env
+          VERSION=${{env.VERSION}}
+          ENVIRONMENT=$ENRIRONMENT
+          GRAPHQL_BACKEND_URL=$GRAPHQL_BACKEND_URL
+          WORLD_TIME_API_URL=$WORLD_TIME_API_URL
+          API_KEY=$API_KEY
+          TIMEOUT_DEBOUNCE=$TIMEOUT_DEBOUNCE
+          EOF
+
+          echo $GOOGLE_SERVICE_JSON > android/app/src/google-services.json
+
+          sed -i'' "s/versionName \".*/versionName \"${{env.VERSION}}\"/g" android/app/build.gradle
+
+      - name: Install npm dependency
+        run: yarn install
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+      - name: Execute Gradle build
+        run: |
+          cd android
+          ./gradlew assembleRelease
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-region: us-east-1
+          role-to-assume: ${{ secrets.OIDC_EKS_ROLE }}
+          role-session-name: OIDCSession
+      - name: Copy apk to S3
+        run: |
+          aws s3 cp android/app/build/outputs/apk/release/app-release.apk s3://modern-channel-$ENVIRONMENT/apk/embonor-canal-moderno-${{env.VERSION}}.apk

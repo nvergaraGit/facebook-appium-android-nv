@@ -1,0 +1,45 @@
+query GetCustomers($pagination: PaginationInput!, $filter: String) {
+    customers(pagination: $pagination, filter: $filter) {
+      items
+      totalItems
+      totalPages
+      customers {
+        codClient
+        rut
+        razonSocial
+        dfrecProg
+        nomreFantasia
+        dcadena
+        dsucursal
+        calle
+        numero
+        dregion
+        ccadenaNacionales
+        ccadena
+        dprovincia
+        dcomuna
+        dplanta
+        coordX
+        coordY
+        dcadenaNacionales
+        dgrupoNacionales
+        csalaSupermercado
+      }
+    }
+  }
+
+  query GetCustomerSummaryInfo($customerInput: CustomerInput) {
+    getCustomerSummaryInfo(customerInput: $customerInput) {
+      totalCatalogs
+      totalExhibitions
+      totalInvoices
+      totalOrders
+      fillRateLastWeek {
+        dateEnd
+        dateIni
+        percentage
+        week
+        flag
+      }
+    }
+  }

@@ -1,0 +1,6 @@
+[dev 9503d07] test commit
+ 4 files changed, 30 insertions(+), 130 deletions(-)
+ rewrite .gitignore (99%)
+ create mode 100755 .husky/commit-msg
+ create mode 100755 .husky/pre-commit
+ create mode 100755 .husky/pre-push

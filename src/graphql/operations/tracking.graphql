@@ -1,0 +1,11 @@
+mutation FinishTracking($finishTrackingInput: FinishTrackingInput!) {
+  finishTracking(finishTrackingInput: $finishTrackingInput) {
+    response {
+      statusCode
+      message
+    }
+    error {
+      details
+    }
+  }
+}

@@ -1,0 +1,4 @@
+serviceWorker.*
+*.d.ts
+*.test.*
+src/graphql/types.ts

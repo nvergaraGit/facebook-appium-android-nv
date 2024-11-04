@@ -1,0 +1,28 @@
+name: Code Quality Pipeline
+
+on:
+  push:
+    branches: ['feature/**', 'fix/**', 'hotfix/**', 'bugfix/**']
+  pull_request:
+    branches: [dev, 'feature/**', 'fix/**', 'hotfix/**', 'bugfix/**']
+jobs:
+  codeQuality:
+    runs-on: ubuntu-22.04
+    if: "!startsWith(github.event.head_commit.message, '[RELEASE]')"
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          cache: 'npm'
+          node-version: 'lts/Hydrogen'
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      - name: Branch Check
+        if: github.base_ref != 'dev' && github.base_ref != 'qa' && github.base_ref != 'main'
+        run: yarn run branch:check
+      - name: Lint Code
+        run: yarn run code:check
+  #TODO: run tests
+  #TODO: add sonarQube

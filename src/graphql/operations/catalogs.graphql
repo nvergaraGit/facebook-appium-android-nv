@@ -1,0 +1,45 @@
+query GetCataloguesWithoutGroup(
+    $getCataloguesWithoutGroupInput: GetCataloguesWithoutGroupInput!
+  ) {
+    getCataloguesWithoutGroup(getCataloguesWithoutGroupInput: $getCataloguesWithoutGroupInput) {
+      data {
+        id
+        catalogo
+        inicio
+        termino
+        categoria
+        cadena
+        bandera
+        mecanica
+        patron
+        empaque
+      }
+      pageInfo {
+        records
+        totalRecords
+        offset
+        currentPage
+        totalPages
+      }
+    }
+  }
+
+  query GetTrackingCatalogues($getTrackingCataloguesInput: GetTrackingCataloguesInput!) {
+  getTrackingCatalogues(getTrackingCataloguesInput: $getTrackingCataloguesInput) {
+    data {
+      cataloguesList {
+        status
+        catalogueInfo {
+          id
+          bandera
+          cadena
+          catalogo
+          categoria
+          inicio
+          termino
+        }
+      }
+      reportAvailable
+    }
+  }
+}

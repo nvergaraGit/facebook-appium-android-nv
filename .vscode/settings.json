@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.gradle": "java",
+        "plyconfig.json": "jsonc"
+    },
+    "java.configuration.updateBuildConfiguration": "interactive"
+}
